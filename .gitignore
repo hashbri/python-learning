@@ -216,3 +216,8 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+### 本地环境（本机专用，不上传）###
+.idea/
+.workbuddy/
+.git_broken_*/
