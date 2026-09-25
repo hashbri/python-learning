@@ -1,6 +1,8 @@
 #项目 猜数字
 import random
 import time
+import json
+import os
 print("猜数字游戏")
 time.sleep(1)
 print("1-简单 2-中等 3-困难")
@@ -28,17 +30,33 @@ def number_game():
             print("猜对了")
             time.sleep(1)
             print("恭喜你")
-            with open("scores.txt", "a", encoding="utf-8") as f:
-                f.write(f"猜了{i+1}次\n")
+            if os.path.exists("scores.json"):
+                with open("scores.json","r",encoding="utf-8") as f:
+                    scores=json.load(f)#把json文本转化成列表
+            else:
+                scores=[]
+            scores.append(i+1)
+            with open("scores.json", "w", encoding="utf-8") as f:
+                json.dump(scores, f)
             break
       else:
           print("游戏失败,正确答案是:", num)
-
-
       b = input("输入y再来一局：")
       if b != "y":
-        break
-    with open("scores.txt","r",encoding="utf-8")as f:
-        lines=f.readlines()
-    print(lines)
+          break
+    if os.path.exists("scores.json"):
+        with open("scores.json", "r", encoding="utf-8") as f:
+            scores = json.load(f)  # 把json文本转化成列表
+    else:
+        scores = []
+    print("历史最佳5次")
+    for rank,s in enumerate(sorted(scores)[:5],start=1):
+        print(f"第 {rank} 名   猜了 {s} 次")
+
+
+
+
+
+
+
 number_game()
