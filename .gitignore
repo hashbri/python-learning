@@ -222,3 +222,7 @@ __marimo__/
 .workbuddy/
 .git_broken_*/
 scores.txt
+
+# 运行产物（每玩一次就变，不该进版本库）
+scores.json
+*.bak
