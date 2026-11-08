@@ -26,6 +26,29 @@ if level==2:
 if level==3:
     max_num=200
     chance=5
+def load_scores():
+    """读成绩。文件不存在、内容坏掉、类型不对，都安全返回空列表。"""
+    if not os.path.exists("scores.json"):
+        return []
+    try:
+        with open("scores.json", "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        print("（成绩文件已损坏，从头开始记录）")
+        return []
+    if not isinstance(data, list):
+        return []
+    return [x for x in data if isinstance(x, int)]
+
+
+def save_scores(scores):
+    """先写临时文件再整体替换，避免写到一半被打断把成绩文件毁掉。"""
+    tmp = "scores.json.tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(scores, f)
+    os.replace(tmp, "scores.json")
+
+
 def number_game():
     while True:
       num = random.randint(1, max_num)
@@ -47,25 +70,16 @@ def number_game():
             print("猜对了")
             time.sleep(1)
             print("恭喜你")
-            if os.path.exists("scores.json"):
-                with open("scores.json","r",encoding="utf-8") as f:
-                    scores=json.load(f)#把json文本转化成列表
-            else:
-                scores=[]
+            scores = load_scores()
             scores.append(count)
-            with open("scores.json", "w", encoding="utf-8") as f:
-                json.dump(scores, f)
+            save_scores(scores)
             break
       else:
           print("游戏失败,正确答案是:", num)
       b = input("输入y再来一局：")
       if b != "y":
           break
-    if os.path.exists("scores.json"):
-        with open("scores.json", "r", encoding="utf-8") as f:
-            scores = json.load(f)  # 把json文本转化成列表
-    else:
-        scores = []
+    scores = load_scores()
     print("历史最佳5次")
     for rank,s in enumerate(sorted(scores)[:5],start=1):
         print(f"第 {rank} 名   猜了 {s} 次")
